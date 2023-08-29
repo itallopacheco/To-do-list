@@ -14,7 +14,7 @@ public class HealhController {
 
     @RequestMapping(path = "/ping")
     public ResponseEntity<String> getPing(){
-        return ResponseEntity.ok("pongOO");
+        return ResponseEntity.ok("pong");
     }
 
 }
