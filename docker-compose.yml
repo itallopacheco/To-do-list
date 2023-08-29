@@ -1,0 +1,31 @@
+version: '3.8'
+name: 'rinha-de-backend'
+
+services:
+  spring-api1:
+    build:
+      dockerfile: Dockerfile
+    hostname: spring-api1
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db-postgresql:5432/rinhadb
+      - DATABASE_USERNAME=rinha
+      - DATABASE_PASSWORD=rinha123
+    depends_on:
+     - db-postgresql
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+  db-postgresql:
+    user: postgres
+    image: postgres:15.2-alpine
+    environment:
+      POSTGRES_USER: rinha
+      POSTGRES_PASSWORD: rinha123
+      POSTGRES_DB: rinhadb
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
