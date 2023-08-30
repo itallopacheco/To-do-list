@@ -4,9 +4,9 @@ import com.example.demo.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.jdbc.datasource.init.UncategorizedScriptException;
 
-import java.net.UnknownServiceException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -24,8 +24,29 @@ public class Project {
     private User owner;
 
 
+    @ManyToMany
+    @JoinTable(
+            name = "project_user",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> members = new ArrayList<>();
+
     public Project(String name){
         this.name = name;
     }
 
+    public void addMember(User member) {
+        members.add(member);
+        member.getProjects().add(this);
+    }
+
+    public List<User> getAllMembers() {
+        return new ArrayList<>(members);
+    }
+
+    public void removeMember(User member) {
+        members.remove(member);
+        member.getProjects().remove(this);
+    }
 }
