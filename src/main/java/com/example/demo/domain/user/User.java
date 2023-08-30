@@ -1,5 +1,6 @@
 package com.example.demo.domain.user;
 
+import com.example.demo.domain.project.Project;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private UserRole role;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Project> projects;
 
     public User(String username, String password, UserRole role) {
         this.username = username;
