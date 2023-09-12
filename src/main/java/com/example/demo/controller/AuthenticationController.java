@@ -4,7 +4,6 @@ import com.example.demo.domain.user.AuthenticationDTO;
 import com.example.demo.domain.user.LoginResponseDTO;
 import com.example.demo.domain.user.RegisterDTO;
 import com.example.demo.domain.user.User;
-import com.example.demo.exceptions.UsernameAlreadyInUseException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,16 +47,13 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
         try{
             if(userRepository.findByUsername(registerDTO.username()) != null){
-                throw new UsernameAlreadyInUseException(registerDTO.username());
+                throw new Exception(registerDTO.username());
             }
 
             String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
             User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
             userRepository.save(newUser);
             return ResponseEntity.ok().build();
-
-        }catch (UsernameAlreadyInUseException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
