@@ -43,21 +43,21 @@ public class AuthenticationController {
 
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
-        try{
-            if(userRepository.findByUsername(registerDTO.username()) != null){
-                throw new Exception(registerDTO.username());
-            }
-
-            String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
-            User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
-            userRepository.save(newUser);
-            return ResponseEntity.ok().build();
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
+//        try{
+//            if(userRepository.findByUsername(registerDTO.username()) != null){
+//                throw new Exception(registerDTO.username());
+//            }
+//
+//            String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+//            User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
+//            userRepository.save(newUser);
+//            return ResponseEntity.ok().build();
+//        }catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//
+//    }
 
 }
