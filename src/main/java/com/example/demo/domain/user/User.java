@@ -1,6 +1,5 @@
 package com.example.demo.domain.user;
 
-import com.example.demo.domain.project.Project;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,14 +20,27 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
+
+    private Date birthDate;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(unique = true)
     private String username;
+
     private String password;
+
     private UserRole role;
 
-    @OneToMany(mappedBy = "owner")
-    private List<Project> projects;
 
-    public User(String username, String password, UserRole role) {
+
+    public User(String name, Date birthDate,String email,String username, String password, UserRole role) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;

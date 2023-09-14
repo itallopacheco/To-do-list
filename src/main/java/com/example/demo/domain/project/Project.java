@@ -20,9 +20,12 @@ public class Project {
 
     private String name;
 
+    @Column(nullable = true)
+    @Lob
+    private String description;
+
     @ManyToOne
     private User owner;
-
 
     @ManyToMany
     @JoinTable(
@@ -32,21 +35,15 @@ public class Project {
     )
     private List<User> members = new ArrayList<>();
 
-    public Project(String name){
+
+    public Project(String name, String description){
         this.name = name;
+        this.description = description;
     }
 
-    public void addMember(User member) {
-        members.add(member);
-        member.getProjects().add(this);
-    }
 
     public List<User> getAllMembers() {
         return new ArrayList<>(members);
     }
 
-    public void removeMember(User member) {
-        members.remove(member);
-        member.getProjects().remove(this);
-    }
 }
