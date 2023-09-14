@@ -1,4 +1,4 @@
-package com.example.demo.domain.user;
+package com.example.demo.domain.enums;
 
 public enum UserRole {
 
