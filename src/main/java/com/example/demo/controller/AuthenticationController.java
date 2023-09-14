@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.user.AuthenticationDTO;
-import com.example.demo.domain.user.LoginResponseDTO;
-import com.example.demo.domain.user.RegisterDTO;
+import com.example.demo.domain.enums.UserRole;
+import com.example.demo.domain.user.dto.AuthenticationDTO;
+import com.example.demo.domain.user.dto.LoginResponseDTO;
 import com.example.demo.domain.user.User;
+import com.example.demo.domain.user.dto.UserCreationDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,21 +44,19 @@ public class AuthenticationController {
 
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
-//        try{
-//            if(userRepository.findByUsername(registerDTO.username()) != null){
-//                throw new Exception(registerDTO.username());
-//            }
-//
-//            String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
-//            User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
-//            userRepository.save(newUser);
-//            return ResponseEntity.ok().build();
-//        }catch (Exception e){
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserCreationDTO userCreationDTO){
+        try{
+            User newUser = userCreationDTO.userCreationDTOtoUser();
+
+            userRepository.save(newUser);
+
+            return ResponseEntity.ok().build();
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
 
 }
