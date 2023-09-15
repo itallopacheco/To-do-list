@@ -1,5 +1,7 @@
 package com.example.demo.domain.project.dto;
 
+import com.example.demo.domain.project.Project;
+import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +35,19 @@ public class ProjectDTO {
     }
     public void addMember(UserDTO userDTO){
         members.add(userDTO);
+    }
+
+    public ProjectDTO(Project project){
+        List<UserDTO> membersDTO = new ArrayList<>();
+        for (User u:project.getAllMembers()) {
+            UserDTO user = new UserDTO(u);
+            membersDTO.add(user);
+        }
+
+        this.id = project.getId();
+        this.name = project.getName();
+        this.description = project.getDescription();
+        this.owner = new UserDTO(project.getOwner());
+        this.members = membersDTO;
     }
 }
