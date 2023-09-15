@@ -28,7 +28,7 @@ public class UserDTO {
 
     public UserDTO(){}
 
-    public UserDTO(@org.jetbrains.annotations.NotNull User user){
+    public UserDTO(User user){
         this.id = user.getId();
         this.name = user.getName();
         this.birthDate = user.getBirthDate();

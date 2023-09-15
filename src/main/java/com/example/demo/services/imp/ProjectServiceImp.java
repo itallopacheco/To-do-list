@@ -10,8 +10,10 @@ import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +35,7 @@ public class ProjectServiceImp implements ProjectService {
                     projectDTO.getDescription(),
                     user.get()
             );
-
+            projectRepository.save(project);
             ProjectDTO response = new ProjectDTO(project);
             return response;
         } else {
@@ -42,17 +44,36 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     @Override
-    public ProjectDTO getProjectById(ProjectDTO projectDTO) {
-        return null;
+    public ProjectDTO getProjectById(Long id) {
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isPresent()){
+            return new ProjectDTO(project.get());
+        }else {
+            return null;
+        }
     }
 
     @Override
     public List<ProjectDTO> getAllProjects() {
-        return null;
+        List<Project> projects = projectRepository.findAll();
+        List<ProjectDTO> projectsDTO = new ArrayList<>();
+
+        for (Project p :projects) {
+            ProjectDTO projectDTO = new ProjectDTO(p);
+            projectsDTO.add(projectDTO);
+        }
+        return projectsDTO;
     }
 
     @Override
-    public Void addMember(UserDTO userDTO) {
+    public Void addMember(Long projectId, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Project> project = projectRepository.findById(projectId);
+
+        if(user.isPresent() && project.isPresent()){
+            project.get().addMember(user.get());
+            projectRepository.save(project.get());
+        }
         return null;
     }
 

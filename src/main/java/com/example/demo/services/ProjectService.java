@@ -11,11 +11,11 @@ public interface ProjectService {
 
     ProjectDTO createProject(CreateProjectDTO projectDTO);
 
-    ProjectDTO getProjectById(ProjectDTO projectDTO);
+    ProjectDTO getProjectById(Long id);
 
     List<ProjectDTO> getAllProjects();
 
-    Void addMember(UserDTO userDTO);
+    Void addMember(Long projectId, Long userId);
 
     ProjectDTO updateProject(Long id, UpdateProjectDTO updateProjectDTO);
 

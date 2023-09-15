@@ -33,9 +33,6 @@ public class ProjectDTO {
     public List<UserDTO> getMembers(){
         return new ArrayList<>(members);
     }
-    public void addMember(UserDTO userDTO){
-        members.add(userDTO);
-    }
 
     public ProjectDTO(Project project){
         List<UserDTO> membersDTO = new ArrayList<>();
