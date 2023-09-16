@@ -9,6 +9,7 @@ import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.ProjectService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -77,13 +78,30 @@ public class ProjectServiceImp implements ProjectService {
         return null;
     }
 
+
     @Override
     public ProjectDTO updateProject(Long id, UpdateProjectDTO updateProjectDTO) {
-        return null;
+        Optional<Project> oldProject = projectRepository.findById(id);
+        if (oldProject.isPresent()){
+            Project project = oldProject.get();
+            project.setName(updateProjectDTO.getName());
+            project.setDescription(updateProjectDTO.getDescription());
+            projectRepository.save(project);
+            ProjectDTO projectDTO = new ProjectDTO(project);
+            return projectDTO;
+        } else {
+            throw new EntityNotFoundException("Projeto com ID " + id + " não encontrado");
+        }
     }
 
     @Override
     public Void deleteProject(Long id) {
-        return null;
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isPresent()){
+            projectRepository.delete(project.get());
+            return null;
+        } else {
+            throw new EntityNotFoundException("Projeto com ID " + id + " não encontrado");
+        }
     }
 }
