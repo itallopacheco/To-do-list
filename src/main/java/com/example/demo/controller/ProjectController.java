@@ -1,16 +1,17 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.project.CreateProjectDTO;
 import com.example.demo.domain.project.Project;
+import com.example.demo.domain.project.dto.CreateProjectDTO;
+import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.repository.ProjectRepository;
+import com.example.demo.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -18,25 +19,24 @@ import java.util.List;
 public class ProjectController {
 
     @Autowired
-    ProjectRepository projectRepository;
+    ProjectService projectService;
 
-//    @PostMapping("/new")
-//    public ResponseEntity createProject(@RequestBody CreateProjectDTO createProjectDTO, @AuthenticationPrincipal User authenticatedUser){
-//
-//        Project newProject = new Project(
-//                createProjectDTO.getName()
-//        );
-//        newProject.setOwner(authenticatedUser);
-//
-//        Project savedProject = projectRepository.save(newProject);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(savedProject.getId())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).build();
-//    }
+    @PostMapping("/add")
+    public ResponseEntity<ProjectDTO> createProject(@RequestBody CreateProjectDTO createProjectDTO, @AuthenticationPrincipal User authenticatedUser){
+        createProjectDTO.setOwnerId(authenticatedUser.getId());
+        return new ResponseEntity<ProjectDTO>(projectService.createProject(createProjectDTO), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProjectDTO>> getAll(){
+        return new ResponseEntity<List<ProjectDTO>>(projectService.getAllProjects(),HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/add-member/{idUser}")
+    public ResponseEntity<?> addMember(@PathVariable(name = "id")long projetoId, @PathVariable(name = "idUser") Long userId){
+        projectService.addMember(projetoId,userId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    }
 
 }

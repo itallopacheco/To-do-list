@@ -1,6 +1,7 @@
 package com.example.demo.domain.project;
 
 import com.example.demo.domain.user.User;
+import com.example.demo.domain.user.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,9 +37,13 @@ public class Project {
     private List<User> members = new ArrayList<>();
 
 
-    public Project(String name, String description){
+    public Project(String name, String description, User owner){
         this.name = name;
         this.description = description;
+        this.owner = owner;
+    }
+    public void addMember(User user){
+        members.add(user);
     }
 
 
