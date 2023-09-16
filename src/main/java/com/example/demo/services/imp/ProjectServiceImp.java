@@ -78,6 +78,24 @@ public class ProjectServiceImp implements ProjectService {
         return null;
     }
 
+    @Override
+    public Void removeMember(Long projectId, Long userId) {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (projectOptional.isPresent() && userOptional.isPresent()){
+            Project project = projectOptional.get();
+            User user = userOptional.get();
+
+            project.getMembers().remove(user);
+            projectRepository.save(project);
+
+        } else {
+            throw new EntityNotFoundException("Projeto com ID " + projectId + " não encontrado");
+        }
+        return null;
+    }
+
 
     @Override
     public ProjectDTO updateProject(Long id, UpdateProjectDTO updateProjectDTO) {

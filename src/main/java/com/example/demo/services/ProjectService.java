@@ -17,6 +17,8 @@ public interface ProjectService {
 
     Void addMember(Long projectId, Long userId);
 
+    Void removeMember(Long projectId, Long userId);
+
     ProjectDTO updateProject(Long id, UpdateProjectDTO updateProjectDTO);
 
     Void deleteProject(Long id);
