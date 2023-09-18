@@ -10,32 +10,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<UserDTO>> getAll(){
         return ResponseEntity.ok().body(userService.getAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<UserDTO> findUserById(@PathVariable(value = "id") long id){
        return ResponseEntity.ok(userService.findById(id));
 
     }
 
-    @GetMapping({"/findByUsername"})
-    public ResponseEntity<UserDTO> findUserByName(String username){
-        return ResponseEntity.ok(userService.findByUsername(username));
-    }
-
-    @PutMapping({"/update"})
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserUpdateDTO userUpdateDTO){
-        return ResponseEntity.ok(userService.updateUser(userUpdateDTO));
+    @PutMapping({"{id}"})
+    public ResponseEntity<UserDTO> updateUser(@PathVariable(value = "id")long id ,@RequestBody UserUpdateDTO userUpdateDTO){
+        return ResponseEntity.ok(userService.updateUser(id,userUpdateDTO));
     }
 
     @DeleteMapping({"{id}"})

@@ -53,8 +53,8 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(UserUpdateDTO userUpdateDTO) {
-       Optional<User> oldUser = userRepository.findById(userUpdateDTO.id());
+    public UserDTO updateUser(Long id,UserUpdateDTO userUpdateDTO) {
+       Optional<User> oldUser = userRepository.findById(id);
        if (oldUser.isPresent()){
             User user = oldUser.get();
             user.setName(userUpdateDTO.name());
