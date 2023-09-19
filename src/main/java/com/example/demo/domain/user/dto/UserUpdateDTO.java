@@ -1,4 +1,10 @@
 package com.example.demo.domain.user.dto;
 
-public record UserUpdateDTO(String name, String email) {
+import jakarta.validation.constraints.Email;
+
+public record UserUpdateDTO(
+        String name,
+        @Email(message = "Email format is invalid")
+        String email
+) {
 }

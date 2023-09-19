@@ -64,6 +64,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDTO updateUser(Long id,UserUpdateDTO userUpdateDTO) {
+       if (userRepository.existsByEmail(userUpdateDTO.email())) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + "already in use");
        Optional<User> oldUser = userRepository.findById(id);
        if (oldUser.isPresent()){
             User user = oldUser.get();
