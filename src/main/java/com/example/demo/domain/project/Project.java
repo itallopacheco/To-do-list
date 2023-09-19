@@ -1,5 +1,6 @@
 package com.example.demo.domain.project;
 
+import com.example.demo.domain.lane.Lane;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserDTO;
 import jakarta.persistence.*;
@@ -36,6 +37,8 @@ public class Project {
     )
     private List<User> members = new ArrayList<>();
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Lane> lanes = new ArrayList<>();
 
     public Project(String name, String description, User owner){
         this.name = name;
