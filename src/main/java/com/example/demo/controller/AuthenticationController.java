@@ -7,12 +7,14 @@ import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserCreationDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,17 +47,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserCreationDTO userCreationDTO){
-        try{
+    public ResponseEntity<?> register(@RequestBody @Valid UserCreationDTO userCreationDTO){
             User newUser = userCreationDTO.userCreationDTOtoUser();
 
             userRepository.save(newUser);
 
             return ResponseEntity.ok().build();
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
 
     }
 
