@@ -1,7 +1,6 @@
 package com.example.demo.services.imp;
 
 import com.example.demo.domain.project.Project;
-import com.example.demo.domain.sprint.dto.SprintDTO;
 import com.example.demo.domain.task.Task;
 import com.example.demo.domain.task.dto.CreateTaskDTO;
 import com.example.demo.domain.task.dto.TaskDTO;
@@ -12,15 +11,13 @@ import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.TaskService;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImp implements TaskService {
@@ -79,22 +76,49 @@ public class TaskServiceImp implements TaskService {
 
     @Override
     public TaskDTO update(Long id, UpdateTaskDTO updateTaskDTO) {
-        return null;
+
+
+
     }
 
     @Override
     public Void delete(Long id) {
+        Optional<Task> taskOptional =  taskRepository.findById(id);
+        if (taskOptional.isEmpty())throw new com.example.demo.services.exceptions.EntityNotFoundException("Task not found for id: " + id);
+        taskRepository.delete(taskOptional.get());
         return null;
     }
 
     @Override
     public TaskDTO addMember(Long idTask, Long idMember) {
-        return null;
+        Optional<Task> taskOptional = taskRepository.findById(idTask);
+        Optional<User> userOptional = userRepository.findById(idMember);
+
+        if (taskOptional.isEmpty() && userOptional.isEmpty()) throw new EntityNotFoundException("Task and user not found for id's: " + idTask + idMember);
+        Task task = taskOptional.get();
+        User user = userOptional.get();
+
+        List<User> member = task.getMembers();
+        // TODO: verificar se o usuário já existe na lista de membros
+        member.add(user);
+        taskRepository.save(task);
+        return toDTO(task);
     }
 
     @Override
     public TaskDTO removeMember(Long idTask, Long idMember) {
-        return null;
+        Optional<Task> taskOptional = taskRepository.findById(idTask);
+        Optional<User> userOptional = userRepository.findById(idMember);
+
+        if (taskOptional.isEmpty() && userOptional.isEmpty()) throw new EntityNotFoundException("Task and user not found for id's: " + idTask + idMember);
+        Task task = taskOptional.get();
+        User user = userOptional.get();
+
+        List<User> member = task.getMembers();
+        // TODO: verificar se o usuário nao esta na lista ?
+        member.remove(user);
+        taskRepository.save(task);
+        return toDTO(task);
     }
 
 
