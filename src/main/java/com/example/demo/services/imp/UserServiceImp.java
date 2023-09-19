@@ -1,11 +1,13 @@
 package com.example.demo.services.imp;
 
 import com.example.demo.domain.user.User;
+import com.example.demo.domain.user.dto.UserCreationDTO;
 import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.domain.user.dto.UserUpdateDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.UserService;
 import com.example.demo.services.exceptions.EntityNotFoundException;
+import com.example.demo.services.exceptions.UniqueFieldAlreadyExists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,24 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Override
+    public UserDTO save(UserCreationDTO userCreationDTO) {
+        boolean emailExists = userRepository.existsByEmail(userCreationDTO.email());
+        boolean usernameExists = userRepository.existsByUsername(userCreationDTO.username());
+
+        if (emailExists && usernameExists) {
+            throw new UniqueFieldAlreadyExists("Email: " + userCreationDTO.email() + " and Username: " + userCreationDTO.username() + " already in use");
+        } else if (emailExists) {
+            throw new UniqueFieldAlreadyExists("Email: " + userCreationDTO.email() + " already in use");
+        } else if (usernameExists) {
+            throw new UniqueFieldAlreadyExists("Username: " + userCreationDTO.username() + " already in use");
+        }
+        User user = userCreationDTO.userCreationDTOtoUser();
+        userRepository.save(user);
+        return new UserDTO(user);
+
+    }
 
     @Override
     public List<UserDTO> getAll() {
