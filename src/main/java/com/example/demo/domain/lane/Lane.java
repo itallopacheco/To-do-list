@@ -1,5 +1,6 @@
 package com.example.demo.domain.lane;
 
+import com.example.demo.domain.lane.dto.LaneDTO;
 import com.example.demo.domain.project.Project;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,16 +18,14 @@ public class Lane {
 
     private String name;
 
-    private Integer order;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Project project;
 
 
-    public Lane(String name, Integer order, Project project){
+    public Lane(String name, Project project){
         this.name = name;
-        this.order = order;
         this.project = project;
     }
+
 
 }
