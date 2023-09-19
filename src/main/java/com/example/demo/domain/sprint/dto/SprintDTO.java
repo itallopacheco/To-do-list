@@ -2,10 +2,12 @@ package com.example.demo.domain.sprint.dto;
 
 import com.example.demo.domain.sprint.Sprint;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 public class SprintDTO {
 
     private Long id;
