@@ -13,8 +13,8 @@ public class CreateTaskDTO {
 
     private String description;
 
-    private Long responsibleId;
-
     private Long projectId;
+
+    private Integer score;
 
 }

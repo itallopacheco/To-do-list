@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImp implements TaskService {
@@ -36,54 +37,44 @@ public class TaskServiceImp implements TaskService {
         Optional<Project> project = projectRepository.findById(projectId);
         Optional<User> user = userRepository.findById(userId);
 
-        if (! project.isPresent()){
+        if (project.isEmpty() && user.isEmpty()){
+            throw new EntityNotFoundException("Nao foi possivel encontrar projeto de id: " + project + "\n"
+            +"Nao foi possivel encontrar usuario de id: " + userId);
+        }
+        if (project.isEmpty()){
             throw new EntityNotFoundException("Nao foi possivel encontrar projeto de id: " + project);
         }
-        if (! user.isPresent()){
+        if (user.isEmpty()){
             throw new EntityNotFoundException("Nao foi possivel encontrar usuario de id: " + userId);
         }
 
+        Project project1 = project.get();
+        User user1 = user.get();
 
         Task task = new Task(
                 createTaskDTO.getName(),
                 createTaskDTO.getDescription(),
-                project.get()
-                );
-        task.setCreationDate(new Date());
+                project1,
+                createTaskDTO.getScore()
+        );
         taskRepository.save(task);
 
-
-        List<UserDTO> membersDTO = new ArrayList<>();
-        UserDTO userDTO = new UserDTO(user.get());
-        for (User u : task.getMembers()) {
-            UserDTO uDTO = new UserDTO(u);
-            membersDTO.add(uDTO);
-        }
-        SprintDTO sprintDTO = new SprintDTO();
-        TaskDTO taskDTO = new TaskDTO(
-                task.getId(),
-                task.getName(),
-                task.getDescription(),
-                task.getCreationDate(),
-                userDTO,
-                membersDTO,
-                sprintDTO,
-                projectId,
-                task.getScore()
-        );
-
-        return taskDTO;
-
+        return toDTO(task);
     }
 
     @Override
-    public TaskDTO getAll(Long projectId) {
-        return null;
+    public List<TaskDTO> getAll() {
+        List<TaskDTO> taskDTOS = taskRepository.findAll().stream()
+                .map(task -> toDTO(task))
+                .toList();
+        return taskDTOS;
     }
 
     @Override
     public TaskDTO getById(Long taskId) {
-        return null;
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) throw new EntityNotFoundException("Task not found for id: " +taskId);
+        return toDTO(taskOptional.get());
     }
 
     @Override
@@ -104,5 +95,24 @@ public class TaskServiceImp implements TaskService {
     @Override
     public TaskDTO removeMember(Long idTask, Long idMember) {
         return null;
+    }
+
+
+    private TaskDTO toDTO(Task task){
+        List<UserDTO> memberDTOs = task.getMembers().stream()
+                .map(member -> new UserDTO(member))
+                .toList();
+
+        return new TaskDTO(
+                task.getId(),
+                task.getName(),
+                task.getDescription(),
+                task.getCreationDate(),
+                task.getResponsible().getId(),
+                memberDTOs,
+                task.getSprint().getId(),
+                task.getProject().getId(),
+                task.getScore()
+        );
     }
 }

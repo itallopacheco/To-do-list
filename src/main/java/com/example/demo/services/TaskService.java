@@ -4,11 +4,13 @@ import com.example.demo.domain.task.dto.CreateTaskDTO;
 import com.example.demo.domain.task.dto.TaskDTO;
 import com.example.demo.domain.task.dto.UpdateTaskDTO;
 
+import java.util.List;
+
 public interface TaskService {
 
     TaskDTO create(Long projectId, Long userId, CreateTaskDTO createTaskDTO);
 
-    TaskDTO getAll(Long projectId);
+    List<TaskDTO> getAll();
 
     TaskDTO getById(Long taskId);
 
