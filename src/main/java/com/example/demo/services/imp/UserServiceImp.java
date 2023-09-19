@@ -68,12 +68,18 @@ public class UserServiceImp implements UserService {
        Optional<User> oldUser = userRepository.findById(id);
        if (oldUser.isPresent()){
             User user = oldUser.get();
-            user.setName(userUpdateDTO.name());
-            user.setEmail(userUpdateDTO.email());
+
+            if (userUpdateDTO.name() != null){
+                user.setName(userUpdateDTO.name());
+
+            }
+            if (userUpdateDTO.email() != null){
+                user.setEmail(userUpdateDTO.email());
+            }
+
             userRepository.save(user);
 
-            UserDTO userDTO = new UserDTO(user);
-            return userDTO;
+           return new UserDTO(user);
 
        } else {
            throw new EntityNotFoundException("User not found for id: "+id);
