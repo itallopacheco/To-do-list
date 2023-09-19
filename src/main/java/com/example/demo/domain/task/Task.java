@@ -54,5 +54,11 @@ public class Task {
         this.project = project;
         this.score = score;
     }
+    public Task(String name, String description, Project project){
+        this.name = name;
+        this.description = description;
+        this.project = project;
+    }
+
 
 }
