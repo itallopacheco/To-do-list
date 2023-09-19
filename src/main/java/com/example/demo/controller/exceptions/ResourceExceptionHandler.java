@@ -2,6 +2,7 @@ package com.example.demo.controller.exceptions;
 
 
 import com.example.demo.services.exceptions.EntityNotFoundException;
+import com.example.demo.services.exceptions.UniqueFieldAlreadyExists;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,17 @@ public class ResourceExceptionHandler {
         error.setFields(errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(UniqueFieldAlreadyExists.class)
+    public ResponseEntity<StandardError> uniqueFieldInUse(UniqueFieldAlreadyExists e, HttpServletRequest request){
+        StandardError error = new StandardError();
+        error.setTimestamp(Instant.now());
+        error.setStatus(HttpStatus.CONFLICT.value());
+        error.setError("Unique field already in use");
+        error.setMessage(e.getMessage());
+        error.setPath(request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
 }

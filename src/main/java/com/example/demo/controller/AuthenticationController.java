@@ -5,8 +5,10 @@ import com.example.demo.domain.user.dto.AuthenticationDTO;
 import com.example.demo.domain.user.dto.LoginResponseDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserCreationDTO;
+import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenService;
+import com.example.demo.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
     private TokenService tokenService;
 
@@ -47,12 +49,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserCreationDTO userCreationDTO){
-            User newUser = userCreationDTO.userCreationDTOtoUser();
+    public ResponseEntity<UserDTO> register(@RequestBody @Valid UserCreationDTO userCreationDTO){
 
-            userRepository.save(newUser);
-
-            return ResponseEntity.ok().build();
+            return new  ResponseEntity<UserDTO>(userService.save(userCreationDTO),HttpStatus.CREATED);
 
     }
 
