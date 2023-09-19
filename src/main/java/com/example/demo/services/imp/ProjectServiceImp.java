@@ -9,9 +9,8 @@ import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.ProjectService;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class ProjectServiceImp implements ProjectService {
             ProjectDTO response = new ProjectDTO(project);
             return response;
         } else {
-            return null;
+            throw new com.example.demo.services.exceptions.EntityNotFoundException("User not found for id: "+projectDTO.getOwnerId());
         }
     }
 
@@ -50,7 +49,7 @@ public class ProjectServiceImp implements ProjectService {
         if (project.isPresent()){
             return new ProjectDTO(project.get());
         }else {
-            return null;
+            throw new com.example.demo.services.exceptions.EntityNotFoundException("Project not found for id: "+id);
         }
     }
 
@@ -68,13 +67,18 @@ public class ProjectServiceImp implements ProjectService {
 
     @Override
     public Void addMember(Long projectId, Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Project> project = projectRepository.findById(projectId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
 
-        if(user.isPresent() && project.isPresent()){
-            project.get().addMember(user.get());
-            projectRepository.save(project.get());
+        if (!userOptional.isPresent() || !projectOptional.isPresent()) {
+            throw new EntityNotFoundException("Invalid user or project IDs: User ID=" + userId + ", Project ID=" + projectId);
         }
+        Project project = projectOptional.get();
+        User user = userOptional.get();
+
+        project.addMember(user);
+        projectRepository.save(project);
+
         return null;
     }
 
@@ -83,16 +87,16 @@ public class ProjectServiceImp implements ProjectService {
         Optional<Project> projectOptional = projectRepository.findById(projectId);
         Optional<User> userOptional = userRepository.findById(userId);
 
-        if (projectOptional.isPresent() && userOptional.isPresent()){
-            Project project = projectOptional.get();
-            User user = userOptional.get();
-
-            project.getMembers().remove(user);
-            projectRepository.save(project);
-
-        } else {
-            throw new EntityNotFoundException("Projeto com ID " + projectId + " não encontrado");
+        if (!userOptional.isPresent() || !projectOptional.isPresent()) {
+            throw new EntityNotFoundException("Invalid user or project IDs: User ID=" + userId + ", Project ID=" + projectId);
         }
+
+        Project project = projectOptional.get();
+        User user = userOptional.get();
+
+        project.getMembers().remove(user);
+        projectRepository.save(project);
+
         return null;
     }
 

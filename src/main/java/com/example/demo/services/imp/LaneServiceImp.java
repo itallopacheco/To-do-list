@@ -8,7 +8,7 @@ import com.example.demo.domain.project.Project;
 import com.example.demo.repository.LaneRepository;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.services.LaneService;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

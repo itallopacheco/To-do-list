@@ -5,6 +5,7 @@ import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.domain.user.dto.UserUpdateDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.UserService;
+import com.example.demo.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,24 +33,13 @@ public class UserServiceImp implements UserService {
     @Override
     public UserDTO findById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()){
-            UserDTO userDTO = new UserDTO(user.get());
-            return userDTO;
-        } else {
-            throw new RuntimeException("user not found for id: " + id);
-        }
+        return new UserDTO(userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("User not found for id: "+id)));
     }
 
     @Override
     public UserDTO findByUsername(String username) {
-        User user = userRepository.findUserByUsername(username);
-
-        if (user != null){
-            UserDTO userDTO = new UserDTO(user);
-            return userDTO;
-        } else {
-            throw new RuntimeException("user not found for username: " + username);
-        }
+        return null;
     }
 
     @Override
@@ -65,7 +55,7 @@ public class UserServiceImp implements UserService {
             return userDTO;
 
        } else {
-           throw new RuntimeException("user not found");
+           throw new EntityNotFoundException("User not found for id: "+id);
        }
 
     }
@@ -76,7 +66,7 @@ public class UserServiceImp implements UserService {
         if (user.isPresent()){
             userRepository.delete(user.get());
         } else {
-            throw new RuntimeException("user not found for id: " + id);
+            throw new EntityNotFoundException("User not found for id: "+id);
         }
 
     }

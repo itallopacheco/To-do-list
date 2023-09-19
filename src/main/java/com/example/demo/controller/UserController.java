@@ -4,6 +4,7 @@ import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.domain.user.dto.UserUpdateDTO;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class UserController {
 
     @GetMapping("{id}")
     public ResponseEntity<UserDTO> findUserById(@PathVariable(value = "id") long id){
-       return ResponseEntity.ok(userService.findById(id));
-
+       UserDTO userDTO = userService.findById(id);
+       return new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
     }
 
     @PutMapping({"{id}"})
