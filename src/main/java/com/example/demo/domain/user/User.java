@@ -2,6 +2,7 @@ package com.example.demo.domain.user;
 
 import com.example.demo.domain.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.List;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
