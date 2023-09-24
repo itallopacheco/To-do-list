@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.domain.project.Project;
 import com.example.demo.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("FROM User u WHERE u.name like %:searchTerm% OR u.username like %:searchTerm%")
     Page<User> search(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+    @Query("FROM Project p WHERE p.owner.id = :id")
+    Page<Project> getProjects(Long id, Pageable pageable);
+
 }

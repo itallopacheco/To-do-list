@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.domain.user.dto.UserUpdateDTO;
@@ -23,13 +24,13 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<Page<UserDTO>> getAll(){
-        return new ResponseEntity<Page<UserDTO>>(userService.getAll(),HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable(value = "id") long id){
        UserDTO userDTO = userService.findById(id);
-       return new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
+       return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @GetMapping("/search")
@@ -38,17 +39,22 @@ public class UserController {
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size){
 
-        return new ResponseEntity<Page<UserDTO>>(userService.search(searchTerm,page,size),HttpStatus.OK);
+        return new ResponseEntity<>(userService.search(searchTerm, page, size), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/projects")
+    public ResponseEntity<Page<ProjectDTO>> findProjects(@PathVariable(value = "id")long id){
+        return new ResponseEntity<>(userService.getProjects(id), HttpStatus.OK);
     }
 
     @PatchMapping({"{id}"})
     public ResponseEntity<UserDTO> update(@PathVariable(value = "id")long id ,@RequestBody @Valid UserUpdateDTO userUpdateDTO){
-        return ResponseEntity.ok(userService.update(id,userUpdateDTO));
+        return new ResponseEntity<>(userService.update(id,userUpdateDTO),HttpStatus.OK);
     }
 
     @DeleteMapping({"{id}"})
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id){
         userService.delete(id);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
