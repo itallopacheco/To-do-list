@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.domain.enums.UserRole;
+import com.example.demo.domain.project.Project;
 import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserCreationDTO;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,13 +49,13 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     private User user;
+    private User user2;
     private UserCreationDTO userCreationDTO;
     private UserUpdateDTO userUpdateDTO;
     private UserDTO userDTO;
-
     private Optional<User> optionalUser;
-    private Page<UserDTO> pageUsers;
-    private Page<ProjectDTO> projectDTOS;
+    private Page<User> pageUsers;
+    private Project project;
 
     @BeforeEach
     void setUp() {
@@ -128,8 +130,20 @@ class UserServiceTest {
     }
 
     @Test
-    void getProjects() {
+    void whenFindAllProjectsThenReturnAnListOfProjects() {
+        when(userRepository.findById(anyLong())).thenReturn(optionalUser);
+        when(userRepository.getProjects(anyLong(),any())).thenReturn(new PageImpl<>(List.of(project)));
+
+        Page<ProjectDTO> response = userService.getProjects(ID);
+
+        assertEquals(1,response.getTotalElements());
+        assertEquals(ProjectDTO.class,response.getContent().get(0).getClass());
+        assertEquals(ID,response.getContent().get(0).getId());
+        assertEquals(userDTO,response.getContent().get(0).getOwner());
+        assertEquals(1,response.getContent().get(0).getMembers().size());
     }
+
+
 
     @Test
     void whenFindByIdThenReturnAnUserInstance() {
@@ -155,11 +169,30 @@ class UserServiceTest {
     }
 
     @Test
-    void search() {
+    void searchWhenNoResultsFoundThenReturnEmptyPage() {
+        when(userRepository.search(anyString(),any(PageRequest.class))).thenReturn(Page.empty());
+
+        Page<UserDTO> response = userService.search("NonExistentTerm",0,10);
+        verify(userRepository, times(1)).
+                search("NonExistentTerm",PageRequest.of(0,10, Sort.Direction.ASC,"name"));
+
+        assertTrue(response.isEmpty());
     }
 
     @Test
+    void searchWhenResultFoundThenReturnPageWithResults(){
+        when(userRepository.search(anyString(),any(PageRequest.class))).thenReturn(pageUsers);
+
+        Page<UserDTO> response = userService.search("Cai",0,10);
+        verify(userRepository,times(1)).search("Cai",PageRequest.of(0,10, Sort.Direction.ASC,"name"));
+        assertFalse(response.isEmpty());
+        assertEquals(2, response.getTotalElements());
+    }
+
+
+    @Test
     void whenUpdateThenReturnSuccess() {
+        when(userRepository.findById(any())).thenReturn(optionalUser);
         when(userRepository.save(any())).thenReturn(user);
 
         UserDTO response = userService.update(ID,userUpdateDTO);
@@ -245,13 +278,15 @@ class UserServiceTest {
 
 
     private void startUser(){
-        List<UserDTO> userDTOList = new ArrayList<>();
+
         user = new User(ID,NAME,BIRTHDATE,EMAIL,USERNAME,PASSWORD,USER_ROLE);
+        user2 = new User(2L,"Itallo2",new Date(2004,03,9),"itallo2@email.com","itallo2","senha123",UserRole.USER);
         userDTO = new UserDTO(user);
-        pageUsers = new PageImpl<>(userDTOList, PageRequest.of(0, 10), userDTOList.size());
+        pageUsers = new PageImpl<>(List.of(user,user2), PageRequest.of(0, 10), 2);
         optionalUser = Optional.of(user);
         userCreationDTO = new UserCreationDTO(NAME,BIRTHDATE,EMAIL,USERNAME,PASSWORD,PASSWORD);
         userUpdateDTO = new UserUpdateDTO(NAME,USERNAME,EMAIL);
+        project = new Project(ID,"Project1","Project Desc.",user,List.of(user),null);
     }
 
 
