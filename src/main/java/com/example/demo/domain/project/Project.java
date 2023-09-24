@@ -23,7 +23,6 @@ public class Project {
     private String name;
 
     @Column(nullable = true)
-    @Lob
     private String description;
 
     @ManyToOne

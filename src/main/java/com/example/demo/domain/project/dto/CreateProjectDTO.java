@@ -15,7 +15,6 @@ public class CreateProjectDTO {
 
     private String name;
 
-    @Lob
     private String description;
 
     @NotEmpty
