@@ -5,6 +5,7 @@ import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserCreationDTO;
 import com.example.demo.domain.user.dto.UserDTO;
+import com.example.demo.domain.user.dto.UserUpdateDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.exceptions.EntityNotFoundException;
 import com.example.demo.services.exceptions.UniqueFieldAlreadyExists;
@@ -26,7 +27,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceTest {
@@ -47,6 +48,7 @@ class UserServiceTest {
 
     private User user;
     private UserCreationDTO userCreationDTO;
+    private UserUpdateDTO userUpdateDTO;
     private UserDTO userDTO;
 
     private Optional<User> optionalUser;
@@ -157,11 +159,88 @@ class UserServiceTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(userRepository.save(any())).thenReturn(user);
+
+        UserDTO response = userService.update(ID,userUpdateDTO);
+
+        assertNotNull(response);
+        assertEquals(UserDTO.class,response.getClass());
+        assertEquals(NAME,response.getName());
+        assertEquals(BIRTHDATE,response.getBirthDate());
+        assertEquals(EMAIL,response.getEmail());
+        assertEquals(USERNAME,response.getUsername());
+
+    }
+    @Test
+    void whenUpdateThenReturnEmailAlreadyExistException() {
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        try{
+            userService.update(ID,userUpdateDTO);
+        } catch (Exception ex){
+            assertEquals(UniqueFieldAlreadyExists.class, ex.getClass());
+            assertEquals("Email: " +EMAIL+ " already in use",ex.getMessage());
+        }
+
+    }
+    @Test
+    void whenUpdateThenReturnUsernameAlreadyExistException() {
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
+
+        try{
+            userService.update(ID,userUpdateDTO);
+        } catch (Exception ex){
+            assertEquals(UniqueFieldAlreadyExists.class, ex.getClass());
+            assertEquals("Username: " +USERNAME+ " already in use",ex.getMessage());
+        }
+
+    }
+    @Test
+    void whenUpdateThenReturnEmailAndUsernameAlreadyExistException() {
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
+
+        try{
+            userService.update(ID,userUpdateDTO);
+        } catch (Exception ex){
+            assertEquals(UniqueFieldAlreadyExists.class, ex.getClass());
+            assertEquals("Email: " + EMAIL + " and Username: " + USERNAME + " already in use",ex.getMessage());
+        }
+
+    }
+    @Test
+    void whenUpdateThenReturnEntityNotFoundException() {
+        when(userRepository.findById(anyLong())).thenThrow(new EntityNotFoundException("User not found for id: "));
+
+        try{
+            userService.update(ID,userUpdateDTO);
+        } catch (Exception ex){
+            assertEquals(EntityNotFoundException.class, ex.getClass());
+            assertEquals("User not found for id: ", ex.getMessage());
+        }
+
     }
 
     @Test
-    void delete() {
+    void deleteWithSuccess() {
+        when(userRepository.findById(anyLong())).thenReturn(optionalUser);
+        doNothing().when(userRepository).delete(optionalUser.get());
+        userService.delete(ID);
+        verify(userRepository,times(1)).delete(any());
+
+    }
+
+    @Test
+    void whenDeleteReturnEntityNotFoundException() {
+        when(userRepository.findById(anyLong())).thenThrow(new EntityNotFoundException("User not found for id: "));
+        try{
+            userService.delete(ID);
+        }catch (Exception ex){
+            assertEquals(EntityNotFoundException.class,ex.getClass());
+            assertEquals("User not found for id: ", ex.getMessage());
+        }
+
     }
 
 
@@ -172,7 +251,7 @@ class UserServiceTest {
         pageUsers = new PageImpl<>(userDTOList, PageRequest.of(0, 10), userDTOList.size());
         optionalUser = Optional.of(user);
         userCreationDTO = new UserCreationDTO(NAME,BIRTHDATE,EMAIL,USERNAME,PASSWORD,PASSWORD);
-
+        userUpdateDTO = new UserUpdateDTO(NAME,USERNAME,EMAIL);
     }
 
 
