@@ -16,8 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -78,29 +76,20 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public UserDTO findByUsername(String username) {
-        return null;
-    }
-
-    @Override
     public UserDTO update(Long id,UserUpdateDTO userUpdateDTO) {
-       if (userRepository.existsByEmail(userUpdateDTO.email())) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + "already in use");
+       if (userRepository.existsByEmail(userUpdateDTO.email())) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + " already in use");
+       if (userRepository.existsByUsername(userUpdateDTO.username())) throw new UniqueFieldAlreadyExists("Username: " + userUpdateDTO.username() + " already in use");
        Optional<User> oldUser = userRepository.findById(id);
        if (oldUser.isPresent()){
             User user = oldUser.get();
 
-            if (userUpdateDTO.name() != null){
-                user.setName(userUpdateDTO.name());
-
-            }
-            if (userUpdateDTO.email() != null){
-                user.setEmail(userUpdateDTO.email());
-            }
+            if (userUpdateDTO.name() != null) user.setName(userUpdateDTO.name());
+            if (userUpdateDTO.username() != null) user.setUsername(userUpdateDTO.username());
+            if (userUpdateDTO.email() != null) user.setEmail(userUpdateDTO.email());
 
             userRepository.save(user);
 
            return new UserDTO(user);
-
        } else {
            throw new EntityNotFoundException("User not found for id: "+id);
        }

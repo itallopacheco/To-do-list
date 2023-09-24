@@ -21,7 +21,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //TODO: privar para admin
     @GetMapping()
     public ResponseEntity<Page<UserDTO>> getAll(){
         return new ResponseEntity<Page<UserDTO>>(userService.getAll(),HttpStatus.OK);
@@ -42,7 +41,7 @@ public class UserController {
         return new ResponseEntity<Page<UserDTO>>(userService.search(searchTerm,page,size),HttpStatus.OK);
     }
 
-    @PutMapping({"{id}"})
+    @PatchMapping({"{id}"})
     public ResponseEntity<UserDTO> update(@PathVariable(value = "id")long id ,@RequestBody @Valid UserUpdateDTO userUpdateDTO){
         return ResponseEntity.ok(userService.update(id,userUpdateDTO));
     }

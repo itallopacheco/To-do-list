@@ -19,8 +19,6 @@ public interface UserService {
 
     Page<UserDTO> search(String searchTerm, Integer page, Integer size);
 
-    UserDTO findByUsername(String username);
-
     UserDTO update(Long id,UserUpdateDTO userUpdateDTO);
 
     void delete(Long id);
