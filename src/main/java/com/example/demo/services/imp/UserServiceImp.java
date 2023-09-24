@@ -1,6 +1,5 @@
 package com.example.demo.services.imp;
 
-import com.example.demo.domain.project.Project;
 import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserCreationDTO;
@@ -79,7 +78,6 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDTO findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
         return new UserDTO(userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("User not found for id: "+id)));
     }
@@ -95,8 +93,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDTO update(Long id,UserUpdateDTO userUpdateDTO) {
-       if (userRepository.existsByEmail(userUpdateDTO.email())) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + " already in use");
-       if (userRepository.existsByUsername(userUpdateDTO.username())) throw new UniqueFieldAlreadyExists("Username: " + userUpdateDTO.username() + " already in use");
+        Boolean emailExists = userRepository.existsByEmail(userUpdateDTO.email());
+        Boolean usernameExists = userRepository.existsByUsername(userUpdateDTO.username());
+        if (emailExists && usernameExists) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + " and Username: " + userUpdateDTO.username() + " already in use");
+        if (emailExists) throw new UniqueFieldAlreadyExists("Email: " + userUpdateDTO.email() + " already in use");
+        if (usernameExists) throw new UniqueFieldAlreadyExists("Username: " + userUpdateDTO.username() + " already in use");
+
        Optional<User> oldUser = userRepository.findById(id);
        if (oldUser.isPresent()){
             User user = oldUser.get();
