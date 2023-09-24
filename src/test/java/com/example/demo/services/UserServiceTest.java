@@ -61,7 +61,17 @@ class UserServiceTest {
     }
 
     @Test
-    void getAll() {
+    void whenFindAllThenReturnAnListOfUsers() {
+        when(userRepository.findAll()).thenReturn(List.of(user));
+
+        Page<UserDTO> response = userService.getAll();
+
+        assertNotNull(response);
+
+        assertEquals(1,response.getTotalElements());
+        assertEquals(UserDTO.class,response.getContent().get(0).getClass());
+        assertEquals(ID,response.getContent().get(0).getId());
+
     }
 
     @Test
