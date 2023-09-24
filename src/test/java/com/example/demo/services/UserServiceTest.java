@@ -5,12 +5,12 @@ import com.example.demo.domain.project.dto.ProjectDTO;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.dto.UserDTO;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.services.exceptions.EntityNotFoundException;
 import com.example.demo.services.imp.UserServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -78,6 +78,17 @@ class UserServiceTest {
         assertEquals(UserDTO.class, response.getClass());
         assertEquals(ID,response.getId());
 
+    }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(userRepository.findById(anyLong())).thenThrow(new EntityNotFoundException("User not found for id: "));
+        try{
+            userService.findById(ID);
+        }catch (Exception ex){
+            assertEquals(EntityNotFoundException.class,ex.getClass());
+            assertEquals("User not found for id: ", ex.getMessage());
+        }
     }
 
     @Test
