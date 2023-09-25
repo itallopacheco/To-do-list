@@ -28,8 +28,8 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ping").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ping").permitAll()
                         .requestMatchers(HttpMethod.POST, "/project/add").authenticated()
                         .anyRequest().authenticated()
                 )
