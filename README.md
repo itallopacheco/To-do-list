@@ -19,15 +19,34 @@ Aproveitando e reforçando o que foi aprendido na matéria de Engenharia de Soft
  - [ ] Adicionar Paginação aos endpoints de listagem
  - [ ] Implementar Autenticação com AccessToken e RefreshToken
  - [ ] Isolar as variáveis de configuração
+ - [ ] Configurar um banco de testes H2 
+ - [x] Conteinerizar
 
 ## Instalação
 
 1. Clone o repositório:
 
-    git clone https://github.com/itallopacheco/To-do-list.git
+
+    `git clone https://github.com/itallopacheco/To-do-list.git`
 
 	
 2. Acesse o diretório 
 
-    cd 
+
+
+    `cd demo`
+
+
+3. Inicie o Docker
+
+
+
+    `docker compose up`
+
+4. Teste a aplicação
+
+
+
+    `http://localhost:8080/api/ping`
+
 
