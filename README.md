@@ -34,7 +34,7 @@ Aproveitando e reforçando o que foi aprendido na matéria de Engenharia de Soft
 
 
 
-    `cd demo`
+    `cd to-do-list`
 
 
 3. Inicie o Docker
