@@ -13,6 +13,8 @@ O intuito principal do projeto é estudar java e springboot.
 
 Aproveitando e reforçando o que foi aprendido na matéria de Engenharia de Software me arrisquei a criar um [documento de requisitos](https://docs.google.com/document/d/1WkRMbIov44BUu5Hdrc_sfs9cDKm2S-_mAXnKg2RI9HM/edit?usp=sharing).
 
+Você também pode consultar o [Diagrama de Classes](https://lucid.app/lucidchart/ee2028eb-7917-4db6-a524-8f75662b5c1b/edit?page=HWEp-vi-RSFO&invitationId=inv_f22d80f0-f0c2-4465-9802-724ad581fb71#).
+
 ## TO:DO
 
  - [ ] Aumentar a cobertura de testes
